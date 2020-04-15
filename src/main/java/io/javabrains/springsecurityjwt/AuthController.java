@@ -7,7 +7,12 @@ package io.javabrains.springsecurityjwt;
 
 import io.javabrains.springsecurityjwt.models.AuthenticationRequest;
 import io.javabrains.springsecurityjwt.models.AuthenticationResponse;
+import io.javabrains.springsecurityjwt.models.User;
+import io.javabrains.springsecurityjwt.repo.UserRepository;
+import io.javabrains.springsecurityjwt.service.MyUserDetailsService;
 import io.javabrains.springsecurityjwt.util.JwtUtil;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +24,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,7 +45,13 @@ class AuthController {
     private JwtUtil jwtTokenUtil;
 
     @Autowired
-    private io.javabrains.springsecurityjwt.service.MyUserDetailsService userDetailsService;
+    private MyUserDetailsService userDetailsService;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
+    @Autowired
+    UserRepository userRepository;
 
     @RequestMapping({"/hello"})
     public String firstPage() {
@@ -80,16 +93,38 @@ class AuthController {
     public ResponseEntity<?> createAuthenticationToken2(@RequestBody AuthenticationRequest authenticationRequest)
             throws AuthenticationException, Exception {
         try {
+            System.out.println("\n\n passwordEncoder : " + passwordEncoder.toString());
+            System.out.println("\n\n Name : " + authenticationRequest.getUsername());
+            System.out.println("\n\n Pass : " + authenticationRequest.getPassword());
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             authenticationRequest.getUsername(),
                             authenticationRequest.getPassword()));
-        } catch (Exception e) {
-            throw new Exception();
+        } catch (AuthenticationException e) {
+            throw new ExceptionLoggin("");
         }
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
         final String token = jwtTokenUtil.generateToken(userDetails);
         return ResponseEntity.ok(new AuthenticationResponse(token));
     }
+
+    @PostMapping("register")
+    public Map<String, String> register(@RequestBody User u) {
+        System.out.println("User : " + u.toString());
+//        System.out.println("Done -- User : " + u.toString());
+        u.setPassword(passwordEncoder.encode(u.getPassword()));
+        u.setUserName(u.getUserName());
+        u.setEnabled(Boolean.TRUE);
+        u.setAuthorities(new ArrayList<>());
+        userRepository.save(u);
+        Map<String, String> map = new HashMap<>();
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(u.getUserName());
+        final String token = jwtTokenUtil.generateToken(userDetails);
+        map.put("status", "OK");
+        map.put("token", token);
+        map.put("user_name", u.getUserName());
+        return map;
+    }
+
 }

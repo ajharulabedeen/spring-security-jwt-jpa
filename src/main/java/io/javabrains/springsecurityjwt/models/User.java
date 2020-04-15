@@ -1,5 +1,6 @@
 package io.javabrains.springsecurityjwt.models;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -21,7 +22,7 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "USER")
-public class User {
+public class User  implements Serializable{
 
     @Id
     @Column(name = "ID")
@@ -52,6 +53,9 @@ public class User {
             inverseJoinColumns = {
                 @JoinColumn(name = "AUTHORITY_ID", referencedColumnName = "ID")})
     private List<Authority> authorities;
+
+    public User() {
+    }
 
     public Long getId() {
         return id;
@@ -109,6 +113,7 @@ public class User {
         return roles;
     }
 
+    //refactor
     public String getRoles(String s) {
         String[] roles = {};
         int size = getAuthorities().size();
@@ -120,8 +125,10 @@ public class User {
                 Authority authority = iterator.next();
 //                System.out.println(authority.getName().toString());
                 roles[x] = authority.getName();
-                s += roles[x]+",";
+                s += roles[x] + ",";
             }
+        } else {
+            s = "NO_ROLE";
         }
         return s;
     }
