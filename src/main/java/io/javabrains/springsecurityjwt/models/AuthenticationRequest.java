@@ -3,8 +3,6 @@ package io.javabrains.springsecurityjwt.models;
 import java.io.Serializable;
 
 public class AuthenticationRequest implements Serializable {
-
-
     private String username;
     private String password;
 

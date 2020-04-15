@@ -33,7 +33,7 @@ class HelloWorldController {
     private JwtUtil jwtTokenUtil;
 
     @Autowired
-    private MyUserDetailsService userDetailsService;
+    private io.javabrains.springsecurityjwt.service.MyUserDetailsService userDetailsService;
 
     @RequestMapping({"/hello"})
     public String firstPage() {
