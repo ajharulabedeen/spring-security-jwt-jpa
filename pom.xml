@@ -5,13 +5,13 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.9.RELEASE</version>
+        <version>2.2.6.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>io.javabrains</groupId>
-    <artifactId>spring-security-jwt</artifactId>
+    <artifactId>spring-security-jwt-jpa</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>spring-security-jwt</name>
+    <name>JavaBrain_spring-security-jwt</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>

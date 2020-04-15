@@ -50,7 +50,7 @@ class HelloWorldController {
 
     @RequestMapping({"/hello"})
     public String firstPage() {
-        return "Hello World";
+        return "<h1>SpringBoot-JWT-JPA</h1>";
     }
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
